@@ -1,0 +1,81 @@
+#include "kart.h"
+//-----------------------------------------------------------------------------------------------------------------
+// Définition des broches d'entrée analogique
+#define POTENTIOMETER_AN    1 // PORT RA1 AN1
+#define CURRENT_SENSOR_AN   2 // PORT RA2 AN2
+//fonction
+void __interrupt() ISR(void); //interuption pour le CAN
+void init_timer(void); //init du timer2 pour la pwm
+void initPWM(void); //init de la PWM
+void initADC(void); //config entre Analogique et du CAN
+void init_interup(void); //autorise l'interruption sur le CAN
+void lecturAn(char port);//lit le Port analogique du CAN(avoir config la broche ds initADC(void))
+//-----------------------------------------------------------------------------------------------------------------
+
+
+
+
+// Coefficients du régulateur PI
+float Kp = 0.1;//valeur a changé
+float Ki = 0.01;//valeur a changé
+
+// Variables pour le calcul PI
+float error = 0;
+float integral = 0;
+float setpoint = 0;
+float proportional;
+
+
+//-----------------------------------------------------------------------------------------------------------------
+void main (void)
+{
+//-----------------------------------------------------------------------------------------------------------------
+    //appel des differentes configurations 
+    init_interup();
+    InitPic();
+    init_timer();
+    initPWM();
+    initADC();
+    
+ //-----------------------------------------------------------------------------------------------------------------
+    
+    float Acc,Current;
+    
+    while(1)
+    {
+        Acc=lecturAn(1);
+        Current=lecturAn(2);
+       
+    }
+//-----------------------------------------------------------------------------------------------------------------
+}
+//-----------------------------------------------------------------------------------------------------------------
+float __interrupt() ISR(void)
+{
+    if (PIR1bits.ADIF) // Vérifiez si l'interruption du CAN a été déclenchée
+    {
+        if(ADCON0bits.CHS=1)
+        {
+                              //char dutycycle;
+             char valccp1;
+    
+        valccp1 = ADRESH/2.55;//dutycycle = ADRESH/2.55;
+                              //valccp1 = dutycycle;
+        CCPR1L = valccp1;
+        
+        PIR1bits.ADIF = 0;  //Réinitialisez le drapeau d'interruption du CAN
+        }
+        if(ADCON0bits.CHS=2)
+        {
+                              
+             char valccp1;
+    
+        valccp1 = ADRESH/2.55;//dutycycle = ADRESH/2.55;
+                              //valccp1 = dutycycle;
+        CCPR1L = valccp1;
+        
+        PIR1bits.ADIF = 0;  //Réinitialisez le drapeau d'interruption du CAN
+        }   
+                
+    }
+}
