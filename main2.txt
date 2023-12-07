@@ -13,19 +13,6 @@ void lecturAn(char port);//lit le Port analogique du CAN(avoir config la broche 
 //-----------------------------------------------------------------------------------------------------------------
 
 
-
-
-// Coefficients du régulateur PI
-float Kp = 0.1;//valeur a changé
-float Ki = 0.01;//valeur a changé
-
-// Variables pour le calcul PI
-float error = 0;
-float integral = 0;
-float setpoint = 0;
-float proportional;
-
-
 //-----------------------------------------------------------------------------------------------------------------
 void main (void)
 {
@@ -39,18 +26,17 @@ void main (void)
     
  //-----------------------------------------------------------------------------------------------------------------
     
-    float Acc,Current;
+   
     
     while(1)
     {
-        Acc=lecturAn(1);
-        Current=lecturAn(2);
+        lecturAn(1);
+        lecturAn(2);
        
     }
 //-----------------------------------------------------------------------------------------------------------------
 }
-//-----------------------------------------------------------------------------------------------------------------
-float __interrupt() ISR(void)
+//---------------------------------------------------------------------------------------------------------------- __interrupt() ISR(void)
 {
     if (PIR1bits.ADIF) // Vérifiez si l'interruption du CAN a été déclenchée
     {
