@@ -1,0 +1,59 @@
+void init_timer(void)
+{
+    OSCCON=0x72;
+    PR2=80;
+    T2CON=0b00000100;
+    TMR2=0;
+}
+void initPWM(void)
+{
+   
+    CCP1CON=0x0C; //configuration ccp1 en PWM sortie sur RC2  
+    CCPR1L = 40;// configuration du rapport cyclique
+    CCPTMRS0=0x00;//met le timer 2 sur la PWM
+}
+short int valeur_analogique;
+void initADC(void)
+{
+	    // Configurer AN0 comme entrée analogique
+	ANSELA = 0b00000001;
+	// Configuration du module CAN
+	ADCON0 = 0b00000001; // Active le CAN et sélectionne AN0 comme entrée
+	ADCON1 = 0b00000000; // Tension de référence VDD et VSS
+	ADCON2 = 0b10010000; // Fréquence d'horloge ADC configurée
+	// Démarrer une conversion
+	
+	//si on veut 8bits en valeur analogique, decalge a droite, //
+	//so on veut 10bits on peut diviser par eenviron 10 pour passer de 1000 a100//
+
+}
+//-----------------------------------------------------------------------------------------------------------------
+void main (void)
+{
+    InitPic();
+     init_timer();
+    TRISCbits.RC2=0;
+    initPWM();
+    initADC();
+    char dutycycle=50;
+    char valccp1 = 0.8*dutycycle;
+    
+    
+    
+        
+    while(1)
+    {
+        ADCON0bits.GO = 1;
+
+	// Attendre la fin de la conversion
+	while (ADCON0bits.GO);
+
+	// Lire la valeur analogique
+	dutycycle = (ADRESH << 8) | ADRESL;
+    UartWriteChar(dutycycle);
+    dutycycle=50;//valeur_analogique*0.0977;
+    valccp1 = 0.8*dutycycle;
+    CCPR1L = valccp1;
+    }
+}
+

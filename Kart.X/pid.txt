@@ -1,0 +1,23 @@
+#define     SWITCH_FREQ     20000
+#define     SAMP_PRESCALE   1
+#define     SAMPLE_FREQ     (SWITCH_FREQ/SAMP_PRESCALE)
+
+float Kp = 1.0;
+float Ki = 1.0;
+float Kd = 1.0;
+
+float error_sum = 1.0;
+float temp = 0.0;
+float error = 0.0;
+
+void call_interrupt(void){
+        // some code
+
+        error = reference_value - voltage;
+        error_sum += error;
+
+        PID = (Kp * error) + (Ki * error_sum) + (Kd * (error - temp));
+        temp = error;
+
+        //some code
+}
