@@ -1,12 +1,10 @@
 // Communication UART
 // Bibliothèque de base
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <xc.h>                 //Fichier include générique pour tous les Pics
 
-//-----------------------------------------------------------------------------------------------------------------
 //Initialisation du module UART n°1
 void InitUart9600(unsigned char Fclk)
 {
@@ -35,9 +33,7 @@ void InitUart9600(unsigned char Fclk)
                                    //SYNC=0 mode asynchrone, SENDB=0 pas d'émission de break, BRGH=1 
   RCSTA1=0b10010000;               //SPEN=1 validation de l'UART, RX9=0 réception sur 8 bits
                                    //CREN=1 validation du récepteur ADDEN=0 dévalidation de la détection d'adresses
-
 }
-
 
 //Initialisation du module UART n°1
 void InitUart38400(unsigned char Fclk)
@@ -67,11 +63,8 @@ void InitUart38400(unsigned char Fclk)
                                    //SYNC=0 mode asynchrone, SENDB=0 pas d'émission de break, BRGH=1 
   RCSTA1=0b10010000;               //SPEN=1 validation de l'UART, RX9=0 réception sur 8 bits
                                    //CREN=1 validation du récepteur ADDEN=0 dévalidation de la détection d'adresses
-
 }
 
-
-//-----------------------------------------------------------------------------------------------------------------
 //Emission d'un charactère sur le module UART n°1
 void UartWriteChar(unsigned char c)
 {
@@ -79,15 +72,10 @@ void UartWriteChar(unsigned char c)
   TXREG1=c;                        //lance l'émission
 }
 
-
-//-----------------------------------------------------------------------------------------------------------------
 //Réception d'un caractère sur le module UART n°1
 unsigned char UartReadChar(void)
 {
   
   while (!PIR1bits.RCIF);           //attend la réception d'un caractère
   return(RCREG1);                  //lecture du tampon UART et retour
-
 }
-
-
