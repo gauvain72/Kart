@@ -26,3 +26,5 @@
 #if (FCLK==32)||(FCLK==64)
 #pragma config PLLCFG=ON        //PLL activee
 #endif
+
+void InitPic(void);
