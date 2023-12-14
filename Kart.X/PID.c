@@ -69,10 +69,10 @@ void PID(void){
 void main (void)
 {
     //appel des differentes configurations 
-    InitPic();
+   // InitPic();
     initTimerPWM();
     initPWM();
-    initADC(false);
+    initADC(0);
     initTimer0_IT(PID_deltaT);
     initInterup();
     

@@ -24,7 +24,7 @@ void main (void)
     InitPic();
     initTimerPWM();
     initPWM();
-    initADC(true);
+    initADC(1);
     initInterup();
     
     while(1)

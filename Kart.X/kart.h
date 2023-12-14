@@ -8,7 +8,7 @@ void initPWM(void);
 void initTimer0_IT(float MSperiod);
 
 //config entre Analogique et du CAN
-void initADC(bool IT);
+void initADC(char IT);
 
 //autorise l'interruption sur le CAN
 void initInterup(void);
@@ -28,4 +28,6 @@ float readCommand(float commandMax);
 
 //input in % (Ex 68 or 79.435)
 void applyPWM(short newValue);
-void applyPWM(float newValue);
+//void applyPWM(float newValue);
+
+void PID(void);

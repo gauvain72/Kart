@@ -1,12 +1,20 @@
+//64MHz freq 
+//PWM 62500Hz
+//resolution 10bit :CCPR1L = 40; +CCP1CONbits.DC1B=0b00;
+     
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <xc.h>
 
+#define CURRENT_sensor 2
+#define COMMAND  3
 void initTimerPWM(void)
 {
-    OSCCON = 0x72;//freq OSC a 16MHz
-    PR2 = 100;// FREQ timer2 a 40KHz
+    OSCCON = 0x72;//freq OSC a 16MHz pour 8MHz OSCCON=0b01100000;
+    OSCTUNEbits.PLLEN=1; //multiple par 4 la freq on passe a 64MHz
+    PR2 = 0xFF;// FREQ timer2 a 40KHz
     T2CON = 0b00000100;//Prediviseur à 1
     TMR2 = 0;
 }
@@ -15,14 +23,15 @@ void initPWM(void)
 {
     CCP1CON = 0x0C; //configuration ccp1 en PWM sortie sur RC2  
     CCPR1L = 40;// configuration du rapport cyclique
+    CCP1CONbits.DC1B=0b00; //resolution 10bit 2bits LSB
     CCPTMRS0 = 0x00;//met le timer 2 sur la PWM
     TRISCbits.RC2 = 0; //config en sortie pour la PWM
 }
 
 void initTimer0_IT(float MSperiod) {
     // Configure Timer0 for 16-bit mode
-    T0CON = 0b10001000;  // Prescaler 1:2, 16-bit mode
-
+    T0CON = 0b10001000;  // Prescaler 1:2, 16-bit mode 
+    //T0CON = 0b10001010;// Prescaler 1:8 //PSA=1? 64MHz
     // Calculate the timer value for the specified period
     // Assuming F_osc = 16 MHz, prescaler = 2
     unsigned int timerValue = 65536 - (int)((MSperiod * 1000.0) / (4.0 * (1.0 / 16.0e6)));
@@ -35,7 +44,7 @@ void initTimer0_IT(float MSperiod) {
     INTCONbits.TMR0IF = 0;
 }
 
-void initADC(bool IT)
+void initADC(char IT)
 {
 	// Configurer PORT A comme entrée analogique
 	ANSELA = 0xFF;
@@ -50,7 +59,7 @@ void initADC(bool IT)
     
     ADCON0bits.GO = 0; //S'assure qu'aucune conversion se lance
 
-    if (IT)
+    if (IT==1)
         PIE1bits.ADIE = 1; // Activation de l'interruption du CAN
     else
         PIE1bits.ADIE = 0;
@@ -78,8 +87,10 @@ float readCurrentSensor(void){
     //3-attendre que la mesure soit finie
     //4-transformer en valeur Amps
     
-    readAn(4); //VALEUR A VERIFIER ----------------------------------------
-
+    readAn(CURRENT_sensor); //VALEUR A VERIFIER ----------------------------------------
+    
+    while (PIR1bits.ADIF == 0);
+    
     float tensionCapteur = 5.0 * (float)(ADCResult()) / 1023.0;
 
     float mesureCapteur = tensionCapteur * 1.0; // Multiply by sensitivity (A/V)
@@ -93,10 +104,10 @@ float readCommand(float commandMax){
     //3-attendre que la mesure soit finie
     //4-transformer la mesure entre 0 et max
 
-    readAn(3); //VALEUR A VERIFIER ----------------------------------------
+    readAn(COMMAND); //VALEUR A VERIFIER ----------------------------------------
 
     while (PIR1bits.ADIF == 0);
-    PIR1bits.ADIF = 0;
+    //PIR1bits.ADIF = 0; inutil remis a 0 automatique
 
     float command = commandMax * (float)(ADCResult()) / 1023.0;
 
@@ -109,11 +120,12 @@ void applyPWM(short newValue){
         
     if (newValue > 95)
         newValue = 100;
-
+//neuValue valeur entre 0 et 1023,
     CCPR1L = newValue;
+    //CCP1CONbits.DC1B
 }
 
-void applyPWM(float newValue){
+/*void applyPWM(float newValue){
     if (newValue < 5)
         newValue = 0;
         
@@ -121,4 +133,4 @@ void applyPWM(float newValue){
         newValue = 100;
 
     CCPR1L = (unsigned char)newValue;
-}
+}*/
