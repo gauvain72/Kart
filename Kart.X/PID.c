@@ -1,9 +1,3 @@
-//Fichiers d'include génériques
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <xc.h>
-
 #include "Uart.h"
 #include "kart.h"
 #include "config.h"
@@ -14,9 +8,9 @@
 static const float PID_Kp = 1.0;      //Constante Erreur
 static const float PID_Ki = 1.0;      //Constante Integration
 static const float PID_Kd = 1.0;      //Constante Derivation
-static const float PID_deltaT = 10.0; //Période T (ms)
+static const float PID_deltaT = 10.0; //PÃ©riode T (ms)
 //Variables PID
-static float PID_PrevError = 0; //Erreur précédente (Amps)
+static float PID_PrevError = 0; //Erreur prÃ©cÃ©dente (Amps)
 static float PID_SumError = 0;  //Somme des erreurs (Amps*ms)
 static float PID_CurrentError;  //Erreur (Amps)
 static float PID_Derivative;    //Derivee (Amps/ms)
