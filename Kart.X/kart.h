@@ -1,4 +1,9 @@
- //init du timer2 pour la pwm
+#pragma once
+
+#define CURRENT_sensor 2
+#define ADC_Command  3
+
+//init du timer2 pour la pwm
 void initTimerPWM(void);
 
 //init de la PWM
@@ -25,9 +30,8 @@ float readCurrentSensor(void);
 //Lis le port du potentiometre commande et retourne entre 0 et Max
 float readCommand(float commandMax);
 
+//newValue valeur entre 0 et 1023,
+void applyPWM(unsigned short newValue);
 
 //input in % (Ex 68 or 79.435)
-void applyPWM(short newValue);
-//void applyPWM(float newValue);
-
-void PID(void);
+void applyPWM_f(float newValue);

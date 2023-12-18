@@ -1,6 +1,7 @@
 #include "config.h"
 #include <xc.h>
 
+
 //Variables de fonctionnement du module en Banque 0:
 unsigned short cpt        @0x061;
 
@@ -14,6 +15,7 @@ typedef union {
   };
 } STATMbits_t;  
 STATMbits_t STATMbits @ 0x060; 
+
 
 //Initialisation generale du Pic
 void InitPic(void)

@@ -7,13 +7,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include <xc.h>
+#include "kart.h"
 
-#define CURRENT_sensor 2
-#define COMMAND  3
 void initTimerPWM(void)
 {
-    OSCCON = 0x72;//freq OSC a 16MHz pour 8MHz OSCCON=0b01100000;
-    OSCTUNEbits.PLLEN=1; //multiple par 4 la freq on passe a 64MHz
+    //OSCCON = 0x72;//freq OSC a 16MHz pour 8MHz OSCCON=0b01100000;
+    //OSCTUNEbits.PLLEN=1; //multiple par 4 la freq on passe a 64MHz
     PR2 = 0xFF;// FREQ timer2 a 40KHz
     T2CON = 0b00000100;//Prediviseur à 1
     TMR2 = 0;
@@ -34,7 +33,7 @@ void initTimer0_IT(float MSperiod) {
     //T0CON = 0b10001010;// Prescaler 1:8 //PSA=1? 64MHz
     // Calculate the timer value for the specified period
     // Assuming F_osc = 16 MHz, prescaler = 2
-    unsigned int timerValue = 65536 - (int)((MSperiod * 1000.0) / (4.0 * (1.0 / 16.0e6)));
+    unsigned int timerValue = 65536 - (unsigned int)((MSperiod * 1000.0) / (4.0 * (1.0 / 16.0e6)));
 
     // Set the calculated timer value
     TMR0 = timerValue;
@@ -55,7 +54,7 @@ void initADC(char IT)
 	ADCON1 = 0b00000000; // Tension de référence VDD et VSS
 	ADCON2 = 0b00010010; // Fréquence d'horloge ADC configurée
 
-    ADCON1 |= 1 << 7; //Justification a droite
+    ADCON2 |= 1 << 7; //Justification a droite
     
     ADCON0bits.GO = 0; //S'assure qu'aucune conversion se lance
 
@@ -78,7 +77,11 @@ void readAn(char port)
 }
 
 unsigned short ADCResult(void){
-    return ((unsigned short)ADRESH << 8) | ADRESL;
+    //unsigned short res = ADRESH << 2; Justification a gauche
+    //res += ADRESL >> 6;
+    unsigned short res = ADRESH << 8;  //justification a droite
+    res += ADRESL;
+    return res;
 }
 
 float readCurrentSensor(void){
@@ -104,7 +107,7 @@ float readCommand(float commandMax){
     //3-attendre que la mesure soit finie
     //4-transformer la mesure entre 0 et max
 
-    readAn(COMMAND); //VALEUR A VERIFIER ----------------------------------------
+    readAn(ADC_Command); //VALEUR A VERIFIER ----------------------------------------
 
     while (PIR1bits.ADIF == 0);
     //PIR1bits.ADIF = 0; inutil remis a 0 automatique
@@ -114,23 +117,25 @@ float readCommand(float commandMax){
     return command;
 }
 
-void applyPWM(short newValue){
-    if (newValue < 5)
+void applyPWM(unsigned short newValue){
+    if (newValue < 50)
         newValue = 0;
         
-    if (newValue > 95)
-        newValue = 100;
-//neuValue valeur entre 0 et 1023,
-    CCPR1L = newValue;
-    //CCP1CONbits.DC1B
+    if (newValue > 970)
+        newValue = 1024;
+    
+    
+    CCPR1L = (unsigned char)(newValue >> 2);
+    CCP1CONbits.DC1B = newValue & 3;
 }
 
-/*void applyPWM(float newValue){
+void applyPWM_f(float newValue){
     if (newValue < 5)
         newValue = 0;
         
     if (newValue > 95)
         newValue = 100;
 
-    CCPR1L = (unsigned char)newValue;
-}*/
+    unsigned short newShortValue = (unsigned short)( newValue*1024.0/100.0 );
+    applyPWM(newShortValue);
+}

@@ -28,6 +28,8 @@ static float Commande;                //Pour la lecture de la commande (Amps)
 static float Mesure;                  //Pour la lecture de la mesure (Amps)
 
 
+void PID(void);
+
 //Interrupt Timer pour T = PID_deltaT
 void __interrupt() ISR(void)
 {
@@ -61,7 +63,7 @@ void PID(void){
     //Calcul PID
     PID_Out = (PID_Kp * PID_CurrentError) + (PID_Ki * PID_SumError) + (PID_Kd * PID_Derivative);
 
-    applyPWM(PID_Out);
+    applyPWM_f(PID_Out);
 
     PID_PrevError = PID_CurrentError;
 }

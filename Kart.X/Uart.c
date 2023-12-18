@@ -3,7 +3,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <xc.h>                 //Fichier include générique pour tous les Pics
+#include <xc.h>
+
+#include "Uart.h"                 //Fichier include générique pour tous les Pics
 
 //Initialisation du module UART n°1
 void InitUart9600(unsigned char Fclk)
@@ -70,6 +72,15 @@ void UartWriteChar(unsigned char c)
 {
   while (!TXSTA1bits.TRMT);        //éventuellement, attend la fin d'émission précédente
   TXREG1=c;                        //lance l'émission
+}
+
+void UartWriteStr (unsigned char* c, short unsigned int lenght)
+{
+    for(short unsigned int i=0; i<lenght;i++){
+        UartWriteChar(c[i]);    
+        if (c[i] == '\0')
+            break;    
+    }
 }
 
 //Réception d'un caractère sur le module UART n°1
