@@ -14,7 +14,7 @@ void initTimerPWM(void)
     //OSCCON = 0x72;//freq OSC a 16MHz pour 8MHz OSCCON=0b01100000;
     //OSCTUNEbits.PLLEN=1; //multiple par 4 la freq on passe a 64MHz
     PR2 = 0xFF;// FREQ timer2 a 40KHz
-    T2CON = 0b00000100;//Prediviseur à 1
+    T2CON = 0b00000100;//Prediviseur Ã  1
     TMR2 = 0;
 }
 
@@ -45,14 +45,14 @@ void initTimer0_IT(float MSperiod) {
 
 void initADC(char IT)
 {
-	// Configurer PORT A comme entrée analogique
+	// Configurer PORT A comme entrÃ©e analogique
 	ANSELA = 0xFF;
     TRISA = 0xFF;
 
 	// Configuration du module CAN
-	ADCON0 = 0b00000101; // Active le CAN et sélectionne AN0 comme entrée
-	ADCON1 = 0b00000000; // Tension de référence VDD et VSS
-	ADCON2 = 0b00010010; // Fréquence d'horloge ADC configurée
+	ADCON0 = 0b00000101; // Active le CAN et sÃ©lectionne AN0 comme entrÃ©e
+	ADCON1 = 0b00000000; // Tension de rÃ©fÃ©rence VDD et VSS
+	ADCON2 = 0b00010010; // FrÃ©quence d'horloge ADC configurÃ©e
 
     ADCON2 |= 1 << 7; //Justification a droite
     
@@ -67,7 +67,7 @@ void initADC(char IT)
 void initInterup(void)
 {
     INTCONbits.GIE = 1;  // Activation globale des interruptions
-    INTCONbits.PEIE = 1; // Activation des interruptions périphériques
+    INTCONbits.PEIE = 1; // Activation des interruptions pÃ©riphÃ©riques
 }
 
 void readAn(char port)
@@ -90,7 +90,7 @@ float readCurrentSensor(void){
     //3-attendre que la mesure soit finie
     //4-transformer en valeur Amps
     
-    readAn(CURRENT_sensor); //VALEUR A VERIFIER ----------------------------------------
+    readAn(CURRENT_sensor);
     
     while (PIR1bits.ADIF == 0);
     
@@ -107,7 +107,7 @@ float readCommand(float commandMax){
     //3-attendre que la mesure soit finie
     //4-transformer la mesure entre 0 et max
 
-    readAn(ADC_Command); //VALEUR A VERIFIER ----------------------------------------
+    readAn(ADC_Command);
 
     while (PIR1bits.ADIF == 0);
     //PIR1bits.ADIF = 0; inutil remis a 0 automatique
@@ -137,5 +137,16 @@ void applyPWM_f(float newValue){
         newValue = 100;
 
     unsigned short newShortValue = (unsigned short)( newValue*1024.0/100.0 );
+    applyPWM(newShortValue);
+}
+
+void applyTension(float newValue){
+    if (newValue < 3)
+        newValue = 0;
+        
+    if (newValue > 45)
+        newValue = 48;
+
+    unsigned short newShortValue = (unsigned short)( newValue*1024.0/48.0 );
     applyPWM(newShortValue);
 }
