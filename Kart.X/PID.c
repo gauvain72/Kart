@@ -4,10 +4,10 @@
 
 
 // -- PID --
-//Constantes PID
-static const float PID_Kp = 1.0;      //Constante Erreur
-static const float PID_Ki = 1.0;      //Constante Integration
-static const float PID_Kd = 1.0;      //Constante Derivation
+//Constantes PID (Ae : Amp erreur)
+static const float PID_Kp = 10.0;      //Constante P (V/Ae)
+static const float PID_Ki = 0.0;      //Constante I (V/(Ae/ms))
+static const float PID_Kd = 0.0;      //Constante D (V/(Ae*ms))
 static const float PID_deltaT = 10.0; //Période T (ms)
 //Variables PID
 static float PID_PrevError = 0; //Erreur précédente (Amps)
@@ -57,7 +57,7 @@ void PID(void){
     //Calcul PID
     PID_Out = (PID_Kp * PID_CurrentError) + (PID_Ki * PID_SumError) + (PID_Kd * PID_Derivative);
 
-    applyPWM_f(PID_Out);
+    applyTension(PID_Out);
 
     PID_PrevError = PID_CurrentError;
 }
