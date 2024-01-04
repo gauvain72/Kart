@@ -21,6 +21,7 @@ static const float CommandeMax = 8.0; //Le maximum de courant du moteur (Amps)
 static float Commande;                //Pour la lecture de la commande (Amps)
 static float Mesure;                  //Pour la lecture de la mesure (Amps)
 
+static unsigned int timerValue;
 
 void PID(void);
 
@@ -29,6 +30,9 @@ void __interrupt() ISR(void)
 {
     // Check if Timer0 overflow caused the interrupt
     if (INTCONbits.TMR0IF) {
+        // Set the calculated timer value
+        TMR0 = timerValue;
+        
         PID();
 
         // Clear the Timer0 interrupt flag
@@ -69,9 +73,10 @@ void main (void)
     initTimerPWM();
     initPWM();
     initADC(0);
-    initTimer0_IT(PID_deltaT);
+    initTimer0_IT();
     initInterup();
-    
+
+    timerValue = calculateTimer0Value(PID_deltaT);
     while(1)
     {
 
