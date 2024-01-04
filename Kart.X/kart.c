@@ -27,20 +27,22 @@ void initPWM(void)
     TRISCbits.RC2 = 0; //config en sortie pour la PWM
 }
 
-void initTimer0_IT(float MSperiod) {
+void initTimer0_IT() {
     // Configure Timer0 for 16-bit mode
     //T0CON = 0b10001000;  // Prescaler 1:2, 16-bit mode 
     T0CON = 0b10001010;// Prescaler 1:8 //PSA=1? 64MHz
-    // Calculate the timer value for the specified period
-    // Assuming F_osc = 16 MHz, prescaler = 2
-    unsigned int timerValue = 65536 - (unsigned int)((MSperiod * 1000.0) / (4.0 * (1.0 / 16.0e6)));
-
-    // Set the calculated timer value
-    TMR0 = timerValue;
 
     // Enable Timer0 interrupt
     INTCONbits.TMR0IE = 1;
     INTCONbits.TMR0IF = 0;
+}
+unsigned int calculateTimer0Value(float MSperiod){
+    //PSC = 8 : Max = 30ms period
+	
+    // Calculate the timer value for the specified period
+    const float FREQ_IN_HZ = 64000000.0; // Assuming Fosc = 64MHz
+    const float PRESCALER = 8.0;
+    unsigned int timerValue = 65536 - (unsigned int)((MSperiod * FREQ_IN_HZ) / (1000.0 * PRESCALER * 4.0));
 }
 
 void initADC(char IT)
