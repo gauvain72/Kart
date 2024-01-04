@@ -29,8 +29,8 @@ void initPWM(void)
 
 void initTimer0_IT(float MSperiod) {
     // Configure Timer0 for 16-bit mode
-    T0CON = 0b10001000;  // Prescaler 1:2, 16-bit mode 
-    //T0CON = 0b10001010;// Prescaler 1:8 //PSA=1? 64MHz
+    //T0CON = 0b10001000;  // Prescaler 1:2, 16-bit mode 
+    T0CON = 0b10001010;// Prescaler 1:8 //PSA=1? 64MHz
     // Calculate the timer value for the specified period
     // Assuming F_osc = 16 MHz, prescaler = 2
     unsigned int timerValue = 65536 - (unsigned int)((MSperiod * 1000.0) / (4.0 * (1.0 / 16.0e6)));
