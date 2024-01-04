@@ -35,3 +35,6 @@ void applyPWM(unsigned short newValue);
 
 //input in % (Ex 68 or 79.435)
 void applyPWM_f(float newValue);
+
+//input in volts
+void applyTension(float newValue);
