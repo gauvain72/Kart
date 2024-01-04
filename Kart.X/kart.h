@@ -9,8 +9,11 @@ void initTimerPWM(void);
 //init de la PWM
 void initPWM(void);
 
-//init timer0 pour avoir IT pour T=10ms
-void initTimer0_IT(float MSperiod);
+//init timer0 pour avoir IT
+void initTimer0_IT();
+
+//Calculates the timer0 reset value
+unsigned int calculateTimer0Value(float MSperiod);
 
 //config entre Analogique et du CAN
 void initADC(char IT);
