@@ -118,12 +118,8 @@ float readCommand(float commandMax){
 }
 
 void applyPWM(unsigned short newValue){
-    if (newValue < 50)
-        newValue = 0;
-        
-    if (newValue > 970)
-        newValue = 1024;
-    
+    if (newValue > 1023)
+        newValue = 1023;
     
     CCPR1L = (unsigned char)(newValue >> 2);
     CCP1CONbits.DC1B = newValue & 3;
