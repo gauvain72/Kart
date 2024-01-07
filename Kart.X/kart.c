@@ -11,6 +11,7 @@
 
 void initTimerPWM(void)
 {
+    // Initialise le timer PWM en configurant le registre PR2 pour obtenir une fréquence de timer2 de 40 KHz
     //OSCCON = 0x72;//freq OSC a 16MHz pour 8MHz OSCCON=0b01100000;
     //OSCTUNEbits.PLLEN=1; //multiple par 4 la freq on passe a 64MHz
     PR2 = 0xFF;// FREQ timer2 a 40KHz
@@ -20,6 +21,7 @@ void initTimerPWM(void)
 
 void initPWM(void)
 {
+    // Initialise le module PWM en configurant CCP1 pour générer un signal PWM sur la sortie RC2 avec un rapport cyclique de 10 bits
     CCP1CON = 0x0C; //configuration ccp1 en PWM sortie sur RC2  
     CCPR1L = 40;// configuration du rapport cyclique
     CCP1CONbits.DC1B=0b00; //resolution 10bit 2bits LSB
@@ -28,7 +30,7 @@ void initPWM(void)
 }
 
 void initTimer0_IT() {
-    // Configure Timer0 for 16-bit mode
+    // Configure le Timer0 en mode 16 bits avec un prédiviseur de 1:8 et active l'interruption Timer0
     //T0CON = 0b10001000;  // Prescaler 1:2, 16-bit mode 
     T0CON = 0b10001010;// Prescaler 1:8 //PSA=1? 64MHz
 
@@ -37,6 +39,7 @@ void initTimer0_IT() {
     INTCONbits.TMR0IF = 0;
 }
 unsigned int calculateTimer0Value(float MSperiod){
+    // Calcule la valeur du timer pour le Timer0 en fonction de la période spécifiée en millisecondes
     //PSC = 8 : Max = 30ms period
 	
     // Calculate the timer value for the specified period
@@ -47,6 +50,7 @@ unsigned int calculateTimer0Value(float MSperiod){
 
 void initADC(char IT)
 {
+    // Initialise le module ADC en configurant PORT A comme entrée analogique, active le CAN et sélectionne AN0 comme entrée
 	// Configurer PORT A comme entrée analogique
 	ANSELA = 0xFF;
     TRISA = 0xFF;
@@ -56,9 +60,9 @@ void initADC(char IT)
 	ADCON1 = 0b00000000; // Tension de référence VDD et VSS
 	ADCON2 = 0b00010010; // Fréquence d'horloge ADC configurée
 
-    ADCON2 |= 1 << 7; //Justification a droite
+    ADCON2 |= 1 << 7; // Justification a droite
     
-    ADCON0bits.GO = 0; //S'assure qu'aucune conversion se lance
+    ADCON0bits.GO = 0; // S'assure qu'aucune conversion se lance
 
     if (IT==1)
         PIE1bits.ADIE = 1; // Activation de l'interruption du CAN
@@ -68,30 +72,32 @@ void initADC(char IT)
 
 void initInterup(void)
 {
+    // Active globalement les interruptions et les interruptions périphériques
     INTCONbits.GIE = 1;  // Activation globale des interruptions
     INTCONbits.PEIE = 1; // Activation des interruptions périphériques
 }
 
 void readAn(char port)
 {
-    ADCON0bits.CHS = port;//config le port choisi a convertir
-    ADCON0bits.GO = 1;//lance la conversion
+    // Selectionne le port choisi à convertir et lance la conversion
+    ADCON0bits.CHS = port; // Config le port choisi a convertir
+    ADCON0bits.GO = 1; // Lance la conversion
 }
 
 unsigned short ADCResult(void){
+    // Lit le résultat de la conversion ADC avec justification à droite
+	
     //unsigned short res = ADRESH << 2; Justification a gauche
-    //res += ADRESL >> 6;
-    unsigned short res = ADRESH << 8;  //justification a droite
+    //res += ADRESL >> 6;	
+    unsigned short res = ADRESH << 8;  // Justification a droite
     res += ADRESL;
+	
     return res;
 }
 
 float readCurrentSensor(void){
-    //1-changer ADC pour entree capteur
-    //2-faire la mesure
-    //3-attendre que la mesure soit finie
-    //4-transformer en valeur Amps
-    
+    // Lit la tension du capteur de courant, convertit en Ampères et renvoie la valeur
+
     readAn(CURRENT_sensor);
     
     while (PIR1bits.ADIF == 0);
@@ -104,15 +110,12 @@ float readCurrentSensor(void){
 }
 
 float readCommand(float commandMax){
-    //1-changer ADC pour entree commande
-    //2-faire la mesure
-    //3-attendre que la mesure soit finie
-    //4-transformer la mesure entre 0 et max
-
+    // Lit la commande analogique, la convertit entre 0 et max, et renvoie la valeur
+	
     readAn(ADC_Command);
 
     while (PIR1bits.ADIF == 0);
-    //PIR1bits.ADIF = 0; inutil remis a 0 automatique
+    //PIR1bits.ADIF = 0; Inutile: remise a 0 automatique
 
     float command = commandMax * (float)(ADCResult()) / 1023.0;
 
@@ -120,6 +123,8 @@ float readCommand(float commandMax){
 }
 
 void applyPWM(unsigned short newValue){
+    // Applique la nouvelle valeur PWM en ajustant les bits CCP1L et DC1B
+	
     if (newValue > 1023)
         newValue = 1023;
     
@@ -128,6 +133,7 @@ void applyPWM(unsigned short newValue){
 }
 
 void applyPWM_f(float newValue){
+    // Applique la nouvelle valeur PWM (en pourcentage) en la convertissant en valeur numérique et appelle applyPWM()
     if (newValue < 5)
         newValue = 0;
         
@@ -139,6 +145,7 @@ void applyPWM_f(float newValue){
 }
 
 void applyTension(float newValue){
+    // Applique la nouvelle valeur de tension en la convertissant en valeur PWM et appelle applyPWM()
     if (newValue < 3)
         newValue = 0;
         
