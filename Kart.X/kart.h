@@ -1,43 +1,43 @@
 #pragma once
 
-#define CURRENT_sensor 2
-#define ADC_Command  3
+#define CURRENT_sensor  2
+#define ADC_Command 3
 
-//init du timer2 pour la pwm
+// Initialise le timer2 pour la PWM
 void initTimerPWM(void);
 
-//init de la PWM
+// Initialise la PWM
 void initPWM(void);
 
-//init timer0 pour avoir IT
+// Initialise le timer0 pour les interruptions
 void initTimer0_IT();
 
-//Calculates the timer0 reset value
+// Calcule la valeur de réinitialisation du timer0
 unsigned int calculateTimer0Value(float MSperiod);
 
-//config entre Analogique et du CAN
+// Configure entre le mode analogique et le CAN
 void initADC(char IT);
 
-//autorise l'interruption sur le CAN
+// Autorise l'interruption sur le CAN
 void initInterup(void);
 
-//lis le Port analogique du CAN(avoir config la broche ds initADC(void))
+// Lit le port analogique du CAN (après avoir configuré la broche dans initADC(void))
 void readAn(char port);
 
-//Retourne la valeur de la conversion sur 10 bits
+// Retourne la valeur de la conversion sur 10 bits
 unsigned short ADCResult(void);
 
-//Lis le port du capteur de courant (Amps)
+// Lit le port du capteur de courant (Ampères)
 float readCurrentSensor(void);
 
-//Lis le port du potentiometre commande et retourne entre 0 et Max
+// Lit le port du potentiomètre de commande et retourne une valeur entre 0 et Max
 float readCommand(float commandMax);
 
-//newValue valeur entre 0 et 1023,
+// Nouvelle valeur entre 0 et 1023
 void applyPWM(unsigned short newValue);
 
-//input in % (Ex 68 or 79.435)
+// Entrée en % (par exemple, 68 ou 79.435)
 void applyPWM_f(float newValue);
 
-//input in volts
+// Entrée en volts
 void applyTension(float newValue);
