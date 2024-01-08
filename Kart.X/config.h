@@ -24,8 +24,8 @@ void InitPic(void);
 
 
 //Fréquence d'horloge choisie: (en MHz)
-#define FCLK 32    
-#define _XTAL_FREQ 32000000      //define nécessaire pour l'utilisation des fonctions __delay
+#define FCLK 64    
+#define _XTAL_FREQ 64000000      //define nécessaire pour l'utilisation des fonctions __delay
 
 #if (FCLK==1)||(FCLK==2)||(FCLK==4)||(FCLK==8)||(FCLK==16)
 #pragma config PLLCFG=OFF       //PLL désactivée
