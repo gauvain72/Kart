@@ -14,7 +14,7 @@ static float PID_PrevError = 0; //Erreur précédente (Amps)
 static float PID_SumError = 0;  //Somme des erreurs (Amps*ms)
 static float PID_CurrentError;  //Erreur (Amps)
 static float PID_Derivative;    //Derivee (Amps/ms)
-static float PID_Out;           //Sortie du PID (% de tension max)
+static float PID_Out;           //Sortie du PID (Volts)
 
 //Variables statiques
 static const float CommandeMax = 8.0; //Le maximum de courant du moteur (Amps)
@@ -24,6 +24,7 @@ static float Mesure;                  //Pour la lecture de la mesure (Amps)
 static unsigned int timerValue;
 
 void PID(void);
+void Mesures (void);
 
 //Interrupt Timer pour T = PID_deltaT
 void __interrupt() ISR(void)
@@ -31,35 +32,36 @@ void __interrupt() ISR(void)
     // Check if Timer0 overflow caused the interrupt
     if (INTCONbits.TMR0IF) {
         // Set the calculated timer value
-        TMR0 = timerValue; //
+        TMR0 = timerValue;
         
         TRISAbits.TRISA4 = 0;
         LATAbits.LATA4 = !LATAbits.LATA4;
         
-        PID();
+        Mesures();
+        //PID();
         
-        
-        //char str[100];
+        char str[25];
+        //10 chars = 3ms 38400 bd
+        sprintf(str, "%.2f, %.2f\n", Commande, Mesure);  
         //sprintf(str, "Command:%g, Mesure:%g, PID:%g\n", Commande, Mesure, PID_Out);  
-        //UartWriteStr(str,100);
-        
-        char str[2];
-        sprintf(str, "A");  
-        UartWriteStr(str,2);
+        UartWriteStr(str,25);
 
         // Clear the Timer0 interrupt flag
         INTCONbits.TMR0IF = 0;
     }
 }
-void PID(void){
+void Mesures (void){
     // 1-Lecture des entrees
+    
+    //Lecture des entrees
+    Mesure = readCurrentSensor();
+    Commande = readCommand(CommandeMax);
+}
+void PID(void){
     // 2-Calcul erreur
     // 3-Traitement PID
     // 4-Ecriture PWM
 
-    //Lecture des entrees
-    Mesure = readCurrentSensor();
-    Commande = readCommand(CommandeMax);
 
     //Calcul erreur (Amps)
     PID_CurrentError = Commande - Mesure;
@@ -84,14 +86,19 @@ void main (void)
     initTimerPWM();
     initPWM();
     initADC(0);
-    initTimer0_IT();
-    initInterup();
-    
+    initInterup();    
     InitUart38400(FCLK);
-
+    
+    initTimer0_IT();
     timerValue = calculateTimer0Value(PID_deltaT);
     while(1)
     {
-        
+        //Echelon
+        applyTension(20);
+        for(short i = 0; i < 4; i++)
+            __delay_ms(1000);
+        applyTension(48);
+        for(short i = 0; i < 4; i++)
+            __delay_ms(1000);
     }
 }

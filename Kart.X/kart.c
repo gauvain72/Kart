@@ -15,7 +15,7 @@ void initTimerPWM(void)
     //OSCCON = 0x72;//freq OSC a 16MHz pour 8MHz OSCCON=0b01100000;
     //OSCTUNEbits.PLLEN=1; //multiple par 4 la freq on passe a 64MHz
     PR2 = 0xFF;// FREQ timer2 a 40KHz
-    T2CON = 0b00000100;//Prediviseur à 1
+    T2CON = 0b00000100;//Prediviseur 1
     TMR2 = 0;
 }
 
@@ -107,7 +107,7 @@ float readCurrentSensor(void){
     
     float tensionCapteur = 5.0 * (float)(ADCResult()) / 1023.0;
 
-    float mesureCapteur = tensionCapteur * 1.0; // Multiply by sensitivity (A/V)
+    float mesureCapteur = (tensionCapteur - 0.2) * 1.0; // Remove offset qnd Multiply by sensitivity (A/V)
 
     return mesureCapteur;
 }
