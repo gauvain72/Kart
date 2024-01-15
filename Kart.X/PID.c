@@ -8,7 +8,7 @@
 static const float PID_Kp = 10.0;      //Constante P (V/Ae)
 static const float PID_Ki = 0.0;      //Constante I (V/(Ae/ms))
 static const float PID_Kd = 0.0;      //Constante D (V/(Ae*ms))
-static const float PID_deltaT = 50.0; //Période T (ms)
+static const float PID_deltaT = 10.0; //Période T (ms)
 //Variables PID
 static float PID_PrevError = 0; //Erreur précédente (Amps)
 static float PID_SumError = 0;  //Somme des erreurs (Amps*ms)
@@ -31,7 +31,7 @@ void __interrupt() ISR(void)
     // Check if Timer0 overflow caused the interrupt
     if (INTCONbits.TMR0IF) {
         // Set the calculated timer value
-        TMR0 = timerValue;
+        TMR0 = timerValue; //
         
         TRISAbits.TRISA4 = 0;
         LATAbits.LATA4 = !LATAbits.LATA4;
@@ -42,6 +42,7 @@ void __interrupt() ISR(void)
         //char str[100];
         //sprintf(str, "Command:%g, Mesure:%g, PID:%g\n", Commande, Mesure, PID_Out);  
         //UartWriteStr(str,100);
+        
         char str[2];
         sprintf(str, "A");  
         UartWriteStr(str,2);
@@ -91,5 +92,6 @@ void main (void)
     timerValue = calculateTimer0Value(PID_deltaT);
     while(1)
     {
+        
     }
 }

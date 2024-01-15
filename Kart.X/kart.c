@@ -32,7 +32,8 @@ void initPWM(void)
 void initTimer0_IT() {
     // Configure le Timer0 en mode 16 bits avec un prédiviseur de 1:8 et active l'interruption Timer0
     //T0CON = 0b10001000;  // Prescaler 1:2, 16-bit mode 
-    T0CON = 0b10001101;// Prescaler 1:64 //PSA=1? 64MHz
+    //T0CON = 0b10001110;// Prescaler 1:128 //PSA=1? 64MHz
+    T0CON = 0b10000011;// Prescaler 1:8 //PSA=1? 64MHz
 
     // Enable Timer0 interrupt
     INTCONbits.TMR0IE = 1;
@@ -40,11 +41,11 @@ void initTimer0_IT() {
 }
 unsigned int calculateTimer0Value(float MSperiod){
     // Calcule la valeur du timer pour le Timer0 en fonction de la période spécifiée en millisecondes
-    //PSC = 8 : Max = 30ms period
+    //PSC = 16 : Max = 30ms period
 	
     // Calculate the timer value for the specified period
     const float FREQ_IN_HZ = 64000000.0;
-    const float PRESCALER = 64.0;
+    const float PRESCALER = 16.0;
     unsigned int timerValue = 65536 - (unsigned int)((MSperiod * FREQ_IN_HZ) / (1000.0 * PRESCALER * 4.0));
     
     return timerValue;
