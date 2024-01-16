@@ -78,7 +78,7 @@ void InitUart115200(unsigned char Fclk)
   PIE1bits.RCIE = 0;  // Désactive les interruptions en réception
   BAUDCONbits.BRG16 = 1;
 
-  unsigned int n = Fclk * 1000000 / (16UL * 115200) - 1;
+  unsigned int n = Fclk * 1000000 / (4UL * 115200) - 1; //16 or 4
 
   SPBRG1 = n;            // Load the low byte of the baud rate value
   SPBRGH1 = (n >> 8);    // Load the high byte of the baud rate value
