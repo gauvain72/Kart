@@ -38,10 +38,7 @@ Consultez la documentation technique fournie avec le matériel pour des informat
 
 ## Auteurs
 
-- [Votre nom]
-- [Collaborateur 1]
-- [Collaborateur 2]
-
+- [Bouche Gauvain]
 ## Licence
 
-Ce code est distribué sous la licence [spécifiez la licence utilisée].
+Ce code est distribué sous la licence [Iut-1_GEII_ESE].
