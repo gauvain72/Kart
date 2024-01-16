@@ -1,22 +1,22 @@
 // Communication UART
-// BibliothËque de base
+// Biblioth√®que de base
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <xc.h>
 
-#include "Uart.h"                 //Fichier include gÈnÈrique pour tous les Pics
+#include "Uart.h"                 //Fichier include g√©n√©rique pour tous les Pics
 
-//Initialisation du module UART n∞1
+//Initialisation du module UART n¬∞1
 void InitUart9600(unsigned char Fclk)
 {
-  TRISCbits.RC7=1;                 //RC7=RX en entrÈe
-  TRISCbits.RC6=1;                 //RC6=TX en entrÈe (controlÈe par le PIC)
-  ANSELCbits.ANSC7=0;              //dÈsactivation du mode analogique de RC7
-  ANSELCbits.ANSC6=0;              //dÈsactivation du mode analogique de RC6
+  TRISCbits.RC7=1;                 //RC7=RX en entr√©e
+  TRISCbits.RC6=1;                 //RC6=TX en entr√©e (control√©e par le PIC)
+  ANSELCbits.ANSC7=0;              //d√©sactivation du mode analogique de RC7
+  ANSELCbits.ANSC6=0;              //d√©sactivation du mode analogique de RC6
    
-  PIE1bits.TXIE=0;                 //DÈsactive les interruptions en transmission
-  PIE1bits.RCIE=1;                 //DÈsactive les interruptions en rÈception
+  PIE1bits.TXIE=0;                 //D√©sactive les interruptions en transmission
+  PIE1bits.RCIE=1;                 //D√©sactive les interruptions en r√©ception
   BAUDCONbits.BRG16=1;
   
   switch (Fclk)
@@ -31,22 +31,22 @@ void InitUart9600(unsigned char Fclk)
     default: SPBRG1=207; SPBRGH1=0; break;
   }
 
-  TXSTA1=0b00100100;               //TX9=0 Èmission sur 8 bits, TXEN=1 validation de l'Èmetteur
-                                   //SYNC=0 mode asynchrone, SENDB=0 pas d'Èmission de break, BRGH=1 
-  RCSTA1=0b10010000;               //SPEN=1 validation de l'UART, RX9=0 rÈception sur 8 bits
-                                   //CREN=1 validation du rÈcepteur ADDEN=0 dÈvalidation de la dÈtection d'adresses
+  TXSTA1=0b00100100;               //TX9=0 √©mission sur 8 bits, TXEN=1 validation de l'√©metteur
+                                   //SYNC=0 mode asynchrone, SENDB=0 pas d'√©mission de break, BRGH=1 
+  RCSTA1=0b10010000;               //SPEN=1 validation de l'UART, RX9=0 r√©ception sur 8 bits
+                                   //CREN=1 validation du r√©cepteur ADDEN=0 d√©validation de la d√©tection d'adresses
 }
 
-//Initialisation du module UART n∞1
+//Initialisation du module UART n¬∞1
 void InitUart38400(unsigned char Fclk)
 {
-  TRISCbits.RC7=1;                 //RC7=RX en entrÈe
-  TRISCbits.RC6=1;                 //RC6=TX en entrÈe (controlÈe par le PIC)
-  ANSELCbits.ANSC7=0;              //dÈsactivation du mode analogique de RC7
-  ANSELCbits.ANSC6=0;              //dÈsactivation du mode analogique de RC6
+  TRISCbits.RC7=1;                 //RC7=RX en entr√©e
+  TRISCbits.RC6=1;                 //RC6=TX en entr√©e (control√©e par le PIC)
+  ANSELCbits.ANSC7=0;              //d√©sactivation du mode analogique de RC7
+  ANSELCbits.ANSC6=0;              //d√©sactivation du mode analogique de RC6
    
-  PIE1bits.TXIE=0;                 //DÈsactive les interruptions en transmission
-  PIE1bits.RCIE=0;                 //DÈsactive les interruptions en rÈception
+  PIE1bits.TXIE=0;                 //D√©sactive les interruptions en transmission
+  PIE1bits.RCIE=0;                 //D√©sactive les interruptions en r√©ception
   BAUDCONbits.BRG16=1;
   
   switch (Fclk)
@@ -61,17 +61,39 @@ void InitUart38400(unsigned char Fclk)
     default: SPBRG1=51; SPBRGH1=0; break;
   }
   
-  TXSTA1=0b00100100;               //TX9=0 Èmission sur 8 bits, TXEN=1 validation de l'Èmetteur
-                                   //SYNC=0 mode asynchrone, SENDB=0 pas d'Èmission de break, BRGH=1 
-  RCSTA1=0b10010000;               //SPEN=1 validation de l'UART, RX9=0 rÈception sur 8 bits
-                                   //CREN=1 validation du rÈcepteur ADDEN=0 dÈvalidation de la dÈtection d'adresses
+  TXSTA1=0b00100100;               //TX9=0 √©mission sur 8 bits, TXEN=1 validation de l'√©metteur
+                                   //SYNC=0 mode asynchrone, SENDB=0 pas d'√©mission de break, BRGH=1 
+  RCSTA1=0b10010000;               //SPEN=1 validation de l'UART, RX9=0 r√©ception sur 8 bits
+                                   //CREN=1 validation du r√©cepteur ADDEN=0 d√©validation de la d√©tection d'adresses
 }
 
-//Emission d'un charactËre sur le module UART n∞1
+void InitUart115200(unsigned char Fclk)
+{
+  TRISCbits.RC7 = 1;    // RC7=RX en entr√©e
+  TRISCbits.RC6 = 1;    // RC6=TX en entr√©e (control√©e par le PIC)
+  ANSELCbits.ANSC7 = 0;  // d√©sactivation du mode analogique de RC7
+  ANSELCbits.ANSC6 = 0;  // d√©sactivation du mode analogique de RC6
+
+  PIE1bits.TXIE = 0;  // D√©sactive les interruptions en transmission
+  PIE1bits.RCIE = 0;  // D√©sactive les interruptions en r√©ception
+  BAUDCONbits.BRG16 = 1;
+
+  unsigned int n = Fclk * 1000000 / (16UL * 115200) - 1;
+
+  SPBRG1 = n;            // Load the low byte of the baud rate value
+  SPBRGH1 = (n >> 8);    // Load the high byte of the baud rate value
+
+  TXSTA1 = 0b00100100;   // TX9=0 √©mission sur 8 bits, TXEN=1 validation de l'√©metteur
+                         // SYNC=0 mode asynchrone, SENDB=0 pas d'√©mission de break, BRGH=1
+  RCSTA1 = 0b10010000;   // SPEN=1 validation de l'UART, RX9=0 r√©ception sur 8 bits
+                         // CREN=1 validation du r√©cepteur ADDEN=0 d√©validation de la d√©tection d'adresses
+}
+
+//Emission d'un charact√®re sur le module UART n¬∞1
 void UartWriteChar(unsigned char c)
 {
-  while (!TXSTA1bits.TRMT);        //Èventuellement, attend la fin d'Èmission prÈcÈdente
-  TXREG1=c;                        //lance l'Èmission
+  while (!TXSTA1bits.TRMT);        //√©ventuellement, attend la fin d'√©mission pr√©c√©dente
+  TXREG1=c;                        //lance l'√©mission
 }
 
 void UartWriteStr (unsigned char* c, short unsigned int lenght)
@@ -83,10 +105,10 @@ void UartWriteStr (unsigned char* c, short unsigned int lenght)
     }
 }
 
-//RÈception d'un caractËre sur le module UART n∞1
+//R√©ception d'un caract√®re sur le module UART n¬∞1
 unsigned char UartReadChar(void)
 {
   
-  while (!PIR1bits.RCIF);           //attend la rÈception d'un caractËre
+  while (!PIR1bits.RCIF);           //attend la r√©ception d'un caract√®re
   return(RCREG1);                  //lecture du tampon UART et retour
 }
