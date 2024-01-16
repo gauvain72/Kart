@@ -1,18 +1,21 @@
 // Communication UART
 
-//Initialisation du module UART n°1
+//Initialisation du module UART nÂ°1
 void InitUart9600(unsigned char Fclk);
 
-//Initialisation du module UART n°1
+//Initialisation du module UART nÂ°1
 void InitUart38400(unsigned char Fclk);
 
-//Emission d'un caractère sur le module UART n°1
+//Initialisation du module UART nÂ°1
+void InitUart115200(unsigned char Fclk)
+
+//Emission d'un caractÃ¨re sur le module UART nÂ°1
 void UartWriteChar(unsigned char c);
 
-//Emission d'un messqge sur le module UART n°1
+//Emission d'un messqge sur le module UART nÂ°1
 void UartWriteStr(unsigned char* c, short unsigned int lenght);
 
 
-//Attente bloquante d'un caractère sur le module UART n°1
+//Attente bloquante d'un caractÃ¨re sur le module UART nÂ°1
 unsigned char UartReadChar(void);
 
